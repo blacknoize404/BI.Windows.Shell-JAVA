@@ -28,7 +28,7 @@ Published through [JitPack](https://jitpack.io/#blacknoize404/BI.Windows.Shell) 
 <dependency>
   <groupId>com.github.blacknoize404</groupId>
   <artifactId>BI.Windows.Shell</artifactId>
-  <version>v0.1.0</version>
+  <version>v0.2.0</version>
 </dependency>
 ```
 
