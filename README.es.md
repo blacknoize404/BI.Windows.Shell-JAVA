@@ -5,6 +5,7 @@
 Integración con la shell de Windows desde Java, sin código nativo propio (usa la API de funciones externas, FFM, de Java 25):
 
 - **Modo oscuro** para la barra de título y para los menús clásicos que dibuja la shell.
+- **Ventanas que dejan pasar el ratón** (click-through), para widgets y superposiciones.
 - **El menú contextual nativo del Explorador** para cualquier archivo, con todos los verbos del sistema y todas las
   extensiones de terceros (7-Zip y compañía), y elementos propios al final.
 
@@ -61,6 +62,24 @@ Las ventanas de Java no exponen su identificador: `WindowHandles.findOwnWindow(t
 superior del proceso actual por su título.
 
 `setTelemetry(Consumer<String>)` en las dos clases recibe una línea JSON por llamada, por si quieres constancia de lo que se ejecutó.
+
+## Ventanas que dejan pasar el ratón
+
+Ni JavaFX ni Swing permiten que una ventana ignore el ratón y lo deje pasar a lo que hay debajo. `WindowStyles` lo
+pide a Windows (`WS_EX_TRANSPARENT`, junto con `WS_EX_LAYERED` y `WS_EX_NOACTIVATE` para que no robe el foco):
+
+```java
+long hwnd = WindowHandles.findOwnWindow("Mi widget");        // el HWND de una ventana de este proceso
+ClickThroughResult result = WindowStyles.setClickThrough(hwnd, true);
+// result.applied(): el estado leído de vuelta es el pedido; result.error(): por qué no, o null
+
+WindowStyles.setClickThrough(hwnd, false);                   // vuelve a recibir el ratón
+boolean passing = WindowStyles.isClickThrough(hwnd);
+```
+
+Una ventana translúcida solo recibe el ratón donde sus píxeles no son del todo transparentes (alfa 0), así que una
+ventana sin fondo ni sombra en una zona no recibe clics en ella aunque no esté en este modo. Si la ventana se cierra
+y se vuelve a mostrar es otra ventana nativa: hay que repetir la llamada.
 
 ## Licencia
 

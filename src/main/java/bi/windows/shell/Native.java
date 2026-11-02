@@ -123,6 +123,7 @@ final class Native {
         static final MethodHandle FIND_WINDOW_EX = bind(USER32, "FindWindowExW", JAVA_LONG, JAVA_LONG, JAVA_LONG, JAVA_LONG, ADDRESS);
         static final MethodHandle GET_WINDOW_THREAD_PROCESS_ID = bind(USER32, "GetWindowThreadProcessId", JAVA_INT, JAVA_LONG, ADDRESS);
         static final MethodHandle GET_FOREGROUND_WINDOW = bind(USER32, "GetForegroundWindow", JAVA_LONG);
+        static final MethodHandle GET_WINDOW_LONG_PTR = bind(USER32, "GetWindowLongPtrW", JAVA_LONG, JAVA_LONG, JAVA_INT);
         static final MethodHandle SET_WINDOW_LONG_PTR = bind(USER32, "SetWindowLongPtrW", JAVA_LONG, JAVA_LONG, JAVA_INT, JAVA_LONG);
         static final MethodHandle CALL_WINDOW_PROC = bind(USER32, "CallWindowProcW", JAVA_LONG, JAVA_LONG, JAVA_LONG, JAVA_INT, JAVA_LONG, JAVA_LONG);
         static final MethodHandle CO_GET_APARTMENT_TYPE = bind(OLE32, "CoGetApartmentType", JAVA_INT, ADDRESS, ADDRESS);

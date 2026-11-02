@@ -97,6 +97,65 @@ class ShellTest {
         assert missing == -ShellMenuResult.NO_FILE.ordinal() - 1 : missing;
     }
 
+    /** Una ventana propia, oculta, solo para la prueba: nunca se toca la de otra aplicación. */
+    private static long createTestWindow() throws Throwable {
+        SymbolLookup user32 = SymbolLookup.libraryLookup("user32.dll", Arena.global());
+        var create = Linker.nativeLinker().downcallHandle(user32.find("CreateWindowExW").orElseThrow(),
+                FunctionDescriptor.of(java.lang.foreign.ValueLayout.JAVA_LONG, JAVA_INT, ADDRESS, ADDRESS, JAVA_INT,
+                        JAVA_INT, JAVA_INT, JAVA_INT, JAVA_INT, java.lang.foreign.ValueLayout.JAVA_LONG,
+                        java.lang.foreign.ValueLayout.JAVA_LONG, java.lang.foreign.ValueLayout.JAVA_LONG, ADDRESS));
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment className = Native.wide(arena, "STATIC");
+            MemorySegment title = Native.wide(arena, "BI.Windows.Shell prueba de estilos");
+            return (long) create.invokeExact(0, className, title, 0x80000000 /* WS_POPUP */, 0, 0, 10, 10, 0L, 0L, 0L, MemorySegment.NULL);
+        }
+    }
+
+    private static void destroyTestWindow(long hwnd) throws Throwable {
+        SymbolLookup user32 = SymbolLookup.libraryLookup("user32.dll", Arena.global());
+        var destroy = Linker.nativeLinker().downcallHandle(user32.find("DestroyWindow").orElseThrow(),
+                FunctionDescriptor.of(JAVA_INT, java.lang.foreign.ValueLayout.JAVA_LONG));
+        int ignored = (int) destroy.invokeExact(hwnd);
+    }
+
+    @Test
+    void clickThroughIsAppliedReadBackAndUndone() throws Throwable {
+        windowsOnly();
+        long hwnd = createTestWindow();
+        assert hwnd != 0 : "no se pudo crear la ventana de prueba";
+        try {
+            assert !WindowStyles.isClickThrough(hwnd);
+
+            ClickThroughResult on = WindowStyles.setClickThrough(hwnd, true);
+            assert on.applied() && on.clickThrough() && on.error() == null : on;
+            assert WindowStyles.isClickThrough(hwnd);
+
+            ClickThroughResult again = WindowStyles.setClickThrough(hwnd, true);   // repetir no cambia nada
+            assert again.applied() && again.clickThrough() : again;
+
+            ClickThroughResult off = WindowStyles.setClickThrough(hwnd, false);
+            assert off.applied() && !off.clickThrough() && off.error() == null : off;
+            assert !WindowStyles.isClickThrough(hwnd);
+        } finally {
+            destroyTestWindow(hwnd);
+        }
+    }
+
+    @Test
+    void clickThroughOnAMissingWindowIsDeclaredNotApplied() {
+        windowsOnly();
+        ClickThroughResult result = WindowStyles.setClickThrough(0, true);
+        assert !result.applied() && result.error() != null : result;
+        assert !WindowStyles.isClickThrough(0);
+    }
+
+    @Test
+    void clickThroughOutsideWindowsIsDeclaredUnsupported() {
+        Assumptions.assumeFalse(Native.WINDOWS, "solo fuera de Windows");
+        assert !WindowStyles.setClickThrough(1, true).applied();
+        assert !WindowStyles.isClickThrough(1);
+    }
+
     @Test
     void menuMessagesAreRecognisedButNothingIsHandledWithoutAMenuOnScreen() {
         for (int msg : new int[]{0x117, 0x2B, 0x2C, 0x121, 0x120}) assert ShellContextMenu.isMenuMessage(msg) : msg;
