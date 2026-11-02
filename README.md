@@ -28,7 +28,7 @@ Published through [JitPack](https://jitpack.io/#blacknoize404/BI.Windows.Shell) 
 <dependency>
   <groupId>com.github.blacknoize404</groupId>
   <artifactId>BI.Windows.Shell</artifactId>
-  <version>v0.2.0</version>
+  <version>v0.3.0</version>
 </dependency>
 ```
 
@@ -75,6 +75,8 @@ ClickThroughResult result = WindowStyles.setClickThrough(hwnd, true);
 
 WindowStyles.setClickThrough(hwnd, false);                   // receives the mouse again
 boolean passing = WindowStyles.isClickThrough(hwnd);
+WindowStyles.setHiddenFromTaskbar(hwnd, true);               // no taskbar button, no Alt+Tab entry
+WindowStyles.setHiddenFromTaskbar(hwnd, false);              // back to being listed
 ```
 
 A translucent window only receives the mouse where its pixels are not fully transparent (alpha 0), so a window with

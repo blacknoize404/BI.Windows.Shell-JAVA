@@ -11,6 +11,10 @@ public final class WindowStyles {
     private static final long WS_EX_TRANSPARENT = 0x00000020L;
     private static final long WS_EX_LAYERED = 0x00080000L;
     private static final long WS_EX_NOACTIVATE = 0x08000000L;
+    private static final long WS_EX_TOOLWINDOW = 0x00000080L;
+    private static final long WS_EX_APPWINDOW = 0x00040000L;
+    private static final int SW_HIDE = 0;
+    private static final int SW_SHOWNA = 8;
 
     private WindowStyles() {
     }
@@ -44,6 +48,51 @@ public final class WindowStyles {
             return new ClickThroughResult(now == enabled, now, null);
         } catch (Throwable t) {
             return new ClickThroughResult(false, false, t.getClass().getSimpleName() + ": " + t.getMessage());
+        }
+    }
+
+    /**
+     * Quita la ventana de la barra de tareas y de Alt+Tab ({@code WS_EX_TOOLWINDOW}) o la devuelve a ellas.
+     * <p>Windows solo lee ese estilo al mostrar la ventana, así que si está visible se oculta un instante y
+     * se vuelve a mostrar sin activarla; no hace nada si el estilo ya es el pedido.
+     *
+     * @param hwnd   la ventana; 0 si todavía no existe
+     * @param hidden true para que no aparezca como aplicación
+     */
+    public static ClickThroughResult setHiddenFromTaskbar(long hwnd, boolean hidden) {
+        if (!Native.WINDOWS) return new ClickThroughResult(false, false, "no es Windows");
+        if (hwnd == 0) return new ClickThroughResult(false, false, "no hay ventana (¿todavía no se mostró?)");
+        try {
+            long style = (long) Native.Win.GET_WINDOW_LONG_PTR.invokeExact(hwnd, GWL_EXSTYLE);
+            long wanted = hidden
+                    ? (style | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW
+                    : style & ~WS_EX_TOOLWINDOW;
+            if (wanted != style) {
+                boolean visible = (int) Native.Win.IS_WINDOW_VISIBLE.invokeExact(hwnd) != 0;
+                if (visible) {
+                    int ignored = (int) Native.Win.SHOW_WINDOW.invokeExact(hwnd, SW_HIDE);
+                }
+                long previous = (long) Native.Win.SET_WINDOW_LONG_PTR.invokeExact(hwnd, GWL_EXSTYLE, wanted);
+                if (visible) {
+                    int ignored = (int) Native.Win.SHOW_WINDOW.invokeExact(hwnd, SW_SHOWNA);
+                }
+            }
+            boolean now = isHiddenFromTaskbar(hwnd);
+            Native.emit("WindowStyles.HiddenFromTaskbar", "requested", hidden, "applied", now == hidden, "styleBefore", style, "styleAfter", wanted);
+            return new ClickThroughResult(now == hidden, now, null);
+        } catch (Throwable t) {
+            return new ClickThroughResult(false, false, t.getClass().getSimpleName() + ": " + t.getMessage());
+        }
+    }
+
+    /** Si la ventana está marcada como de herramientas (sin botón en la barra de tareas). */
+    public static boolean isHiddenFromTaskbar(long hwnd) {
+        if (!Native.WINDOWS || hwnd == 0) return false;
+        try {
+            long style = (long) Native.Win.GET_WINDOW_LONG_PTR.invokeExact(hwnd, GWL_EXSTYLE);
+            return (style & WS_EX_TOOLWINDOW) != 0;
+        } catch (Throwable t) {
+            return false;
         }
     }
 
