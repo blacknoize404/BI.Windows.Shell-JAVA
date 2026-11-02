@@ -2,7 +2,7 @@
 
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
 
-Windows shell integration from Java, with no native code of its own (it uses the Foreign Function & Memory API of Java 25):
+Windows shell integration from Java, with no native code of its own (it uses the Foreign Function & Memory API of Java 27):
 
 - **Dark mode** for the title bar and for the classic menus the shell draws.
 - **Click-through windows**, for widgets and overlays.
@@ -29,11 +29,11 @@ Published through [JitPack](https://jitpack.io/#blacknoize404/BI.Windows.Shell-J
 <dependency>
   <groupId>com.github.blacknoize404</groupId>
   <artifactId>BI.Windows.Shell-JAVA</artifactId>
-  <version>v0.2.0</version>
+  <version>v0.4.0</version>
 </dependency>
 ```
 
-It is the Java module `bi.windows.shell` and needs Java 25. Run with `--enable-native-access=bi.windows.shell` (or
+It is the Java module `bi.windows.shell` and needs Java 27. Run with `--enable-native-access=bi.windows.shell` (or
 `ALL-UNNAMED` on the class path) to avoid the restricted-method warning.
 
 ## Dark mode
