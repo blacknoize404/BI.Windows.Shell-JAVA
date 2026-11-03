@@ -9,13 +9,14 @@ Integración con la shell de Windows desde Java, sin código nativo propio (usa 
 - **El menú contextual nativo del Explorador** para cualquier archivo, con todos los verbos del sistema y todas las
   extensiones de terceros (7-Zip y compañía), y elementos propios al final.
 
-Es el port de `Blacknoize.Windows.Shell`, la misma biblioteca escrita para .NET.
+La edición .NET vive en [BI.Windows.Shell-NET](https://github.com/blacknoize404/BI.Windows.Shell-NET) —
+mismo conjunto de funciones, mismo nombre; solo cambia el sufijo del repositorio.
 
 > **English documentation**: [README.md](README.md)
 
 ## Instalación
 
-Se publica con [JitPack](https://jitpack.io/#blacknoize404/BI.Windows.Shell) a partir de cada etiqueta de versión:
+Se publica con [JitPack](https://jitpack.io/#blacknoize404/BI.Windows.Shell-JAVA) a partir de cada etiqueta de versión:
 
 ```xml
 <repositories>
@@ -27,7 +28,7 @@ Se publica con [JitPack](https://jitpack.io/#blacknoize404/BI.Windows.Shell) a p
 
 <dependency>
   <groupId>com.github.blacknoize404</groupId>
-  <artifactId>BI.Windows.Shell</artifactId>
+  <artifactId>BI.Windows.Shell-JAVA</artifactId>
   <version>v0.2.0</version>
 </dependency>
 ```
@@ -75,11 +76,17 @@ ClickThroughResult result = WindowStyles.setClickThrough(hwnd, true);
 
 WindowStyles.setClickThrough(hwnd, false);                   // vuelve a recibir el ratón
 boolean passing = WindowStyles.isClickThrough(hwnd);
+WindowStyles.setHiddenFromTaskbar(hwnd, true);               // sin botón en la barra ni entrada en Alt+Tab
+boolean oculta = WindowStyles.isHiddenFromTaskbar(hwnd);
+WindowStyles.setHiddenFromTaskbar(hwnd, false);              // de vuelta a estar listada
+long primerPlano = WindowHandles.foreground();               // la ventana en primer plano del sistema
 ```
 
 Una ventana translúcida solo recibe el ratón donde sus píxeles no son del todo transparentes (alfa 0), así que una
-ventana sin fondo ni sombra en una zona no recibe clics en ella aunque no esté en este modo. Si la ventana se cierra
-y se vuelve a mostrar es otra ventana nativa: hay que repetir la llamada.
+ventana sin fondo ni sombra en una zona no recibe clics en ella aunque no esté en este modo. Windows solo lee el
+estilo de la barra de tareas al mostrar la ventana, así que una ventana visible parpadea una vez mientras
+`setHiddenFromTaskbar` la cambia. Si la ventana se cierra y se vuelve a mostrar es otra ventana nativa: hay que
+repetir la llamada.
 
 ## Licencia
 

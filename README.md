@@ -9,13 +9,14 @@ Windows shell integration from Java, with no native code of its own (it uses the
 - **The native context menu of Explorer** for any file, with every system verb and every third-party extension (7-Zip and
   friends), plus your own items at the end.
 
-It is a port of `Blacknoize.Windows.Shell`, the same library written for .NET.
+The .NET edition lives at [BI.Windows.Shell-NET](https://github.com/blacknoize404/BI.Windows.Shell-NET) —
+same feature set, same name; only the repository suffix differs.
 
 > **Documentación en español**: [README.es.md](README.es.md)
 
 ## Install
 
-Published through [JitPack](https://jitpack.io/#blacknoize404/BI.Windows.Shell) from each release tag:
+Published through [JitPack](https://jitpack.io/#blacknoize404/BI.Windows.Shell-JAVA) from each release tag:
 
 ```xml
 <repositories>
@@ -27,8 +28,8 @@ Published through [JitPack](https://jitpack.io/#blacknoize404/BI.Windows.Shell) 
 
 <dependency>
   <groupId>com.github.blacknoize404</groupId>
-  <artifactId>BI.Windows.Shell</artifactId>
-  <version>v0.3.0</version>
+  <artifactId>BI.Windows.Shell-JAVA</artifactId>
+  <version>v0.2.0</version>
 </dependency>
 ```
 
@@ -76,12 +77,15 @@ ClickThroughResult result = WindowStyles.setClickThrough(hwnd, true);
 WindowStyles.setClickThrough(hwnd, false);                   // receives the mouse again
 boolean passing = WindowStyles.isClickThrough(hwnd);
 WindowStyles.setHiddenFromTaskbar(hwnd, true);               // no taskbar button, no Alt+Tab entry
+boolean hidden = WindowStyles.isHiddenFromTaskbar(hwnd);
 WindowStyles.setHiddenFromTaskbar(hwnd, false);              // back to being listed
+long foreground = WindowHandles.foreground();                // the system's foreground window
 ```
 
 A translucent window only receives the mouse where its pixels are not fully transparent (alpha 0), so a window with
-no background or shadow in some area will not get clicks there even when it is not in this mode. If the window is
-closed and shown again it is a different native window: call it again.
+no background or shadow in some area will not get clicks there even when it is not in this mode. Windows only reads
+the taskbar style when the window is shown, so a visible window blinks once while `setHiddenFromTaskbar` flips it.
+If the window is closed and shown again it is a different native window: call it again.
 
 ## License
 
