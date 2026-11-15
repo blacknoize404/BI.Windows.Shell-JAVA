@@ -126,6 +126,7 @@ final class Native {
         static final MethodHandle GET_WINDOW_LONG_PTR = bind(USER32, "GetWindowLongPtrW", JAVA_LONG, JAVA_LONG, JAVA_INT);
         static final MethodHandle SET_WINDOW_LONG_PTR = bind(USER32, "SetWindowLongPtrW", JAVA_LONG, JAVA_LONG, JAVA_INT, JAVA_LONG);
         static final MethodHandle SHOW_WINDOW = bind(USER32, "ShowWindow", JAVA_INT, JAVA_LONG, JAVA_INT);
+        static final MethodHandle SET_WINDOW_POS = bind(USER32, "SetWindowPos", JAVA_INT, JAVA_LONG, JAVA_LONG, JAVA_INT, JAVA_INT, JAVA_INT, JAVA_INT, JAVA_INT);
         static final MethodHandle IS_WINDOW_VISIBLE = bind(USER32, "IsWindowVisible", JAVA_INT, JAVA_LONG);
         static final MethodHandle CALL_WINDOW_PROC = bind(USER32, "CallWindowProcW", JAVA_LONG, JAVA_LONG, JAVA_LONG, JAVA_INT, JAVA_LONG, JAVA_LONG);
         static final MethodHandle CO_GET_APARTMENT_TYPE = bind(OLE32, "CoGetApartmentType", JAVA_INT, ADDRESS, ADDRESS);

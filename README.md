@@ -29,7 +29,7 @@ Published through [JitPack](https://jitpack.io/#blacknoize404/BI.Windows.Shell-J
 <dependency>
   <groupId>com.github.blacknoize404</groupId>
   <artifactId>BI.Windows.Shell-JAVA</artifactId>
-  <version>v0.4.0</version>
+  <version>v0.5.0</version>
 </dependency>
 ```
 
@@ -79,6 +79,7 @@ boolean passing = WindowStyles.isClickThrough(hwnd);
 WindowStyles.setHiddenFromTaskbar(hwnd, true);               // no taskbar button, no Alt+Tab entry
 boolean hidden = WindowStyles.isHiddenFromTaskbar(hwnd);
 WindowStyles.setHiddenFromTaskbar(hwnd, false);              // back to being listed
+WindowStyles.keepOnTop(hwnd);                                // re-assert "always on top" above the taskbar, no focus change
 long foreground = WindowHandles.foreground();                // the system's foreground window
 ```
 

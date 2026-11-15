@@ -15,6 +15,10 @@ public final class WindowStyles {
     private static final long WS_EX_APPWINDOW = 0x00040000L;
     private static final int SW_HIDE = 0;
     private static final int SW_SHOWNA = 8;
+    private static final long HWND_TOPMOST = -1L;
+    private static final int SWP_NOSIZE = 0x0001;
+    private static final int SWP_NOMOVE = 0x0002;
+    private static final int SWP_NOACTIVATE = 0x0010;
 
     private WindowStyles() {
     }
@@ -82,6 +86,25 @@ public final class WindowStyles {
             return new ClickThroughResult(now == hidden, now, null);
         } catch (Throwable t) {
             return new ClickThroughResult(false, false, t.getClass().getSimpleName() + ": " + t.getMessage());
+        }
+    }
+
+    /**
+     * Vuelve a poner la ventana en lo más alto de las que están «siempre encima», sin activarla ni moverla.
+     * <p>La barra de tareas de Windows también es de esa clase y, al recibir el foco, se coloca por encima del
+     * resto: una ventana que reposa sobre ella queda detrás. Reafirmarlo cada poco devuelve la ventana a su
+     * sitio; no cambia su tamaño, posición ni el foco.
+     *
+     * @param hwnd la ventana; 0 si todavía no existe
+     * @return true si el sistema aceptó la petición
+     */
+    public static boolean keepOnTop(long hwnd) {
+        if (!Native.WINDOWS || hwnd == 0) return false;
+        try {
+            return (int) Native.Win.SET_WINDOW_POS.invokeExact(hwnd, HWND_TOPMOST, 0, 0, 0, 0,
+                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE) != 0;
+        } catch (Throwable t) {
+            return false;
         }
     }
 

@@ -162,4 +162,12 @@ class ShellTest {
         assert !ShellContextMenu.isMenuMessage(0x0F);
         assert !ShellContextMenu.tryHandleMenuMessage(0x117, 0, 0);
     }
+    @Test
+    void keepOnTopRefusesAMissingWindowAndTheCallIsBound() {
+        windowsOnly();
+        org.junit.jupiter.api.Assertions.assertFalse(WindowStyles.keepOnTop(0));
+        org.junit.jupiter.api.Assertions.assertNotNull(Native.Win.SET_WINDOW_POS);
+    }
+
+
 }
