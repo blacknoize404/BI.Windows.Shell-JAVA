@@ -68,6 +68,33 @@ public final class TaskbarPanel implements AutoCloseable {
     }
 
     /**
+     * Si este sistema puede mostrar el panel: Windows 8 o posterior (las ventanas con capas dentro de otra llegaron
+     * ahí) y una barra de tareas del Explorador. El proceso además debe declarar en su manifiesto que es compatible
+     * con Windows 8 o posterior; si no, {@link #create()} o {@link #show} fallan aunque esto diga que sí.
+     */
+    public static boolean isSupported() {
+        if (!Native.WINDOWS || !atLeastWindows8(System.getProperty("os.version", ""))) return false;
+        try (Arena arena = Arena.ofConfined()) {
+            long tray = (long) Native.Win.FIND_WINDOW_W.invokeExact(Native.wide(arena, "Shell_TrayWnd"), MemorySegment.NULL);
+            return tray != 0;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /** Si la versión de Windows ({@code os.version}, «10.0», «6.1») es la 6.2 (Windows 8) o posterior. */
+    static boolean atLeastWindows8(String version) {
+        String[] parts = version.split("\\.");
+        try {
+            int major = Integer.parseInt(parts[0].trim());
+            int minor = parts.length > 1 ? Integer.parseInt(parts[1].trim()) : 0;
+            return major > 6 || (major == 6 && minor >= 2);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
      * Crea el panel, todavía sin imagen.
      *
      * @return el panel; null si no es Windows o no hay barra de tareas

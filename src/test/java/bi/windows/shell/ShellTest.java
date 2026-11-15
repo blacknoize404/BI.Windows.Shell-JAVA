@@ -180,6 +180,16 @@ class ShellTest {
 
 
     @Test
+    void taskbarPanelNeedsWindows8OrLater() {
+        assert TaskbarPanel.atLeastWindows8("10.0");
+        assert TaskbarPanel.atLeastWindows8("6.2");
+        assert TaskbarPanel.atLeastWindows8("6.3");
+        assert !TaskbarPanel.atLeastWindows8("6.1");
+        assert !TaskbarPanel.atLeastWindows8("5.1");
+        assert !TaskbarPanel.atLeastWindows8("");
+    }
+
+    @Test
     void taskbarPanelShowsAnImageInTheTaskbarAndCloses() throws Exception {
         windowsOnly();
         int[] slot = TaskbarPanel.slot();
