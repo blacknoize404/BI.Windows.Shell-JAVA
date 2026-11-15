@@ -170,4 +170,34 @@ class ShellTest {
     }
 
 
+
+    @Test
+    void topmostGuardRefusesAMissingWindowAndUnwatchIsSafe() {
+        windowsOnly();
+        org.junit.jupiter.api.Assertions.assertFalse(bi.windows.shell.TopmostGuard.watch(0));
+        bi.windows.shell.TopmostGuard.unwatch(0);
+    }
+
+
+    @Test
+    void taskbarPanelShowsAnImageInTheTaskbarAndCloses() throws Exception {
+        windowsOnly();
+        int[] slot = TaskbarPanel.slot();
+        Assumptions.assumeTrue(slot != null, "sin barra de tareas");
+        assert slot[1] > 0 : java.util.Arrays.toString(slot);
+        TaskbarPanel.isTaskbarLight();   // no falla, sea cual sea el tema
+        boolean shown = onThread(false, () -> {
+            TaskbarPanel panel = TaskbarPanel.create();
+            if (panel == null) return false;
+            try {
+                int[] pixels = new int[8 * 4];
+                java.util.Arrays.fill(pixels, 0x80800000);   // rojo semitransparente, premultiplicado
+                return panel.show(pixels, 8, 4) && !panel.show(new int[1], 8, 4);
+            } finally {
+                panel.close();
+            }
+        });
+        assert shown;
+    }
+
 }

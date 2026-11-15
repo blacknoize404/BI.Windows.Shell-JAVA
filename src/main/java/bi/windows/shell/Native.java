@@ -129,7 +129,33 @@ final class Native {
         static final MethodHandle SET_WINDOW_POS = bind(USER32, "SetWindowPos", JAVA_INT, JAVA_LONG, JAVA_LONG, JAVA_INT, JAVA_INT, JAVA_INT, JAVA_INT, JAVA_INT);
         static final MethodHandle IS_WINDOW_VISIBLE = bind(USER32, "IsWindowVisible", JAVA_INT, JAVA_LONG);
         static final MethodHandle CALL_WINDOW_PROC = bind(USER32, "CallWindowProcW", JAVA_LONG, JAVA_LONG, JAVA_LONG, JAVA_INT, JAVA_LONG, JAVA_LONG);
+        static final MethodHandle FIND_WINDOW_W = bind(USER32, "FindWindowW", JAVA_LONG, ADDRESS, ADDRESS);
+        static final MethodHandle FIND_WINDOW_EX_W = bind(USER32, "FindWindowExW", JAVA_LONG, JAVA_LONG, JAVA_LONG, ADDRESS, ADDRESS);
+        static final MethodHandle SET_PARENT = bind(USER32, "SetParent", JAVA_LONG, JAVA_LONG, JAVA_LONG);
+        static final MethodHandle GET_PARENT = bind(USER32, "GetParent", JAVA_LONG, JAVA_LONG);
+        static final MethodHandle GET_WINDOW_RECT = bind(USER32, "GetWindowRect", JAVA_INT, JAVA_LONG, ADDRESS);
+        static final MethodHandle SET_WIN_EVENT_HOOK = bind(USER32, "SetWinEventHook", JAVA_LONG, JAVA_INT, JAVA_INT, JAVA_LONG, ADDRESS, JAVA_INT, JAVA_INT, JAVA_INT);
+        static final MethodHandle UNHOOK_WIN_EVENT = bind(USER32, "UnhookWinEvent", JAVA_INT, JAVA_LONG);
         static final MethodHandle CO_GET_APARTMENT_TYPE = bind(OLE32, "CoGetApartmentType", JAVA_INT, ADDRESS, ADDRESS);
+        private static final SymbolLookup GDI32 = SymbolLookup.libraryLookup("gdi32.dll", LIBS);
+        private static final SymbolLookup ADVAPI32 = SymbolLookup.libraryLookup("advapi32.dll", LIBS);
+        static final MethodHandle GET_MODULE_HANDLE = bind(KERNEL32, "GetModuleHandleW", JAVA_LONG, ADDRESS);
+        static final MethodHandle CREATE_WINDOW_EX = bind(USER32, "CreateWindowExW", JAVA_LONG, JAVA_INT, ADDRESS, ADDRESS,
+                JAVA_INT, JAVA_INT, JAVA_INT, JAVA_INT, JAVA_INT, JAVA_LONG, JAVA_LONG, JAVA_LONG, ADDRESS);
+        static final MethodHandle DESTROY_WINDOW = bind(USER32, "DestroyWindow", JAVA_INT, JAVA_LONG);
+        static final MethodHandle IS_WINDOW = bind(USER32, "IsWindow", JAVA_INT, JAVA_LONG);
+        static final MethodHandle GET_DC = bind(USER32, "GetDC", JAVA_LONG, JAVA_LONG);
+        static final MethodHandle RELEASE_DC = bind(USER32, "ReleaseDC", JAVA_INT, JAVA_LONG, JAVA_LONG);
+        static final MethodHandle UPDATE_LAYERED_WINDOW = bind(USER32, "UpdateLayeredWindow", JAVA_INT, JAVA_LONG, JAVA_LONG,
+                ADDRESS, ADDRESS, JAVA_LONG, ADDRESS, JAVA_INT, ADDRESS, JAVA_INT);
+        static final MethodHandle CREATE_COMPATIBLE_DC = bind(GDI32, "CreateCompatibleDC", JAVA_LONG, JAVA_LONG);
+        static final MethodHandle CREATE_DIB_SECTION = bind(GDI32, "CreateDIBSection", JAVA_LONG, JAVA_LONG, ADDRESS, JAVA_INT,
+                ADDRESS, JAVA_LONG, JAVA_INT);
+        static final MethodHandle SELECT_OBJECT = bind(GDI32, "SelectObject", JAVA_LONG, JAVA_LONG, JAVA_LONG);
+        static final MethodHandle DELETE_OBJECT = bind(GDI32, "DeleteObject", JAVA_INT, JAVA_LONG);
+        static final MethodHandle DELETE_DC = bind(GDI32, "DeleteDC", JAVA_INT, JAVA_LONG);
+        static final MethodHandle REG_GET_VALUE = bind(ADVAPI32, "RegGetValueW", JAVA_INT, JAVA_LONG, ADDRESS, ADDRESS,
+                JAVA_INT, ADDRESS, ADDRESS, ADDRESS);
 
         private Win() {
         }
